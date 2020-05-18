@@ -1,0 +1,34 @@
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\icp deneme.exe.config
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\icp deneme.exe
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\icp deneme.pdb
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\MathNet.Numerics.dll
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\MathNet.Numerics.xml
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.csprojAssemblyReference.cache
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp_deneme.Form1.resources
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp_deneme.Properties.Resources.resources
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.csproj.GenerateResource.cache
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.csproj.CoreCompileInputs.cache
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.csproj.CopyComplete
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.exe
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\obj\Debug\icp deneme.pdb
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\KdTreeLib.dll
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\Supercluster.KDTree.dll
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\System.ValueTuple.dll
+C:\Users\yahya\Desktop\icp deneme\icp deneme\icp deneme\bin\Debug\System.ValueTuple.xml
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\icp deneme.exe.config
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\icp deneme.exe
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\icp deneme.pdb
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\KdTreeLib.dll
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\MathNet.Numerics.dll
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\Supercluster.KDTree.dll
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\System.ValueTuple.dll
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\MathNet.Numerics.xml
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\bin\Debug\System.ValueTuple.xml
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.csprojAssemblyReference.cache
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp_deneme.Form1.resources
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp_deneme.Properties.Resources.resources
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.csproj.GenerateResource.cache
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.csproj.CopyComplete
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.exe
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.pdb
+C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.csproj.CoreCompileInputs.cache
