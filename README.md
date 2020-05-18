@@ -3,6 +3,6 @@
 
  This project is based on Rigid Registration Iterative Closest Point Tutorial which can be found 
  in http://www.sci.utah.edu/~shireen/pdfs/tutorials/Elhabian_ICP09.pdf
- This also uses Supercluster KD-Tree algorithm by @eric-regina.
+ This also uses Supercluster KD-Tree algorithm by Eric Regina (https://github.com/eric-regina).
 
  Examples are also included in project.
