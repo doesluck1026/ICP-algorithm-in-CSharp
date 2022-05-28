@@ -32,3 +32,20 @@ C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp 
 C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.exe
 C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.pdb
 C:\Users\CDS_Software02\Desktop\Projeler\3D profil tarama\icp deneme\C# icp\icp deneme\obj\Debug\icp deneme.csproj.CoreCompileInputs.cache
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\icp deneme.exe.config
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\icp deneme.exe
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\icp deneme.pdb
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\KdTreeLib.dll
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\MathNet.Numerics.dll
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\Supercluster.KDTree.dll
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\System.ValueTuple.dll
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\MathNet.Numerics.xml
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\bin\Debug\System.ValueTuple.xml
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.csproj.AssemblyReference.cache
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp_deneme.Form1.resources
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp_deneme.Properties.Resources.resources
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.csproj.GenerateResource.cache
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.csproj.CoreCompileInputs.cache
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.csproj.CopyComplete
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.exe
+C:\Projects\Github\CDS\ICP-algorithm-in-CSharp\C# icp\icp deneme\obj\Debug\icp deneme.pdb

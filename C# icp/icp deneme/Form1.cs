@@ -23,12 +23,13 @@ namespace icp_deneme
         {
             ///definitions
             var m = Matrix<double>.Build;
-            int max_itr = 200;
+            int max_itr = 500;
+            double threshold = 0.000001;
+
             double grid = 0.1;
             double err = 0;
 
             int Np = 500;
-            double threshold = 0.0001;
             Matrix<double> R = m.Dense(3, 3);
             Matrix<double> t = m.Dense(3, 1);
             double offset_x = 0, offset_y = 120; ///translation respect to origin
@@ -36,9 +37,20 @@ namespace icp_deneme
             offset_x = Convert.ToDouble(textBox1.Text);
             offset_y = Convert.ToDouble(textBox2.Text);
             alfa = Convert.ToDouble(textBox3.Text);
-            
+
+            V_Shape_ICP v_Shape_ICP = new V_Shape_ICP();
+
+            int init_offsetX = 400;
+            int init_offsetY = 200;
+            v_Shape_ICP.AngleOfV_Obj = 90;
+            v_Shape_ICP.PositionOfV_Obj[0] = init_offsetX;
+            v_Shape_ICP.PositionOfV_Obj[1] = init_offsetY;
+
+            //Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
+            Matrix<double> M_points = v_Shape_ICP.CreateRefMatrix();
+
             ///Create C shaped Data cloud
-            Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
+           // Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
             ///transform this data cloud for specified parameters as Model cloud and copy them to another cloud as sample
             Matrix<double> P_points = addMotion(M_points, offset_x, offset_y, alfa);
             ///Add random noise to Sample Data cloud
@@ -50,18 +62,39 @@ namespace icp_deneme
             DrawPoint2(P_points, Brushes.Red, pictureBox1, g);
             DrawPoint2(M_points, Brushes.Green, pictureBox1, g);
             ///delay 1500 ms for user to see data clouds
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(2000);
             Stopwatch watch = new Stopwatch();
             watch.Restart();
+            //Matrix<double> ref_Vector=m.Dense(2,1,1);
+            //Matrix<double> ref_Vector_ref = m.Dense(2, 1, 1);
+            //ref_Vector[0, 0] = 10;
+            //ref_Vector[1, 0] = 350 ;
+            //ref_Vector = addMotion(ref_Vector, offset_x, offset_y, alfa);
+            //ref_Vector_ref = ref_Vector.Clone();
+            //V_Shape_ICP v_Shape_ICP = new V_Shape_ICP();
+            Matrix<double> offsetMat = m.Dense(2, 1);
+            offsetMat[0, 0] = init_offsetX;
+            offsetMat[1, 0] = init_offsetY;
+            var cornerPoints2 = v_Shape_ICP.FindVShapePoints(P_points);
+            //var cornerPoints = ICP.AddVectorValsToMatrix(cornerPoints2, offsetMat);
+            
+            //leftCorner = (double[])cornerPoints[0].Clone();
+            //midPoint = (double[])cornerPoints[1].Clone();
+            //rightCorner = (double[])cornerPoints[2].Clone();
+
+
             ///Apply ICP  to Point clouds
-            P_points = ICP.ICP_run(M_points, P_points, threshold, max_itr,false);
+           // P_points = ICP.ICP_run(M_points, P_points, threshold, max_itr,false,ref ref_Vector);
             watch.Stop();
             Debug.WriteLine("ICP time = " + watch.ElapsedMilliseconds + " ms");
             ///Draw Results
             g.Clear(Color.Black);
             pictureBox1.Image = flag;
             DrawPoint2(P_points, Brushes.Red, pictureBox1, g);
-            DrawPoint2(M_points, Brushes.Green, pictureBox1, g);
+            DrawPoint2(cornerPoints2, Brushes.White, pictureBox1, g);
+            DrawPoint2(M_points, new SolidBrush(Color.FromArgb(30,Color.Green)), pictureBox1, g);
+            //DrawPoint2(ref_Vector, Brushes.Blue, pictureBox1, g);
+            //DrawPoint2(ref_Vector_ref, Brushes.White, pictureBox1, g);
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -142,7 +175,6 @@ namespace icp_deneme
             double grid = 0.1;
             double err = 0;
 
-            int Np = 500;
             double threshold = 0.00001;
             Matrix<double> R = m.Dense(3, 3);
             Matrix<double> t = m.Dense(3, 1);
@@ -151,7 +183,17 @@ namespace icp_deneme
             offset_x = Convert.ToDouble(textBox1.Text);
             offset_y = Convert.ToDouble(textBox2.Text);
             alfa = Convert.ToDouble(textBox3.Text);
-            Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
+
+            V_Shape_ICP v_Shape_ICP = new V_Shape_ICP();
+
+            v_Shape_ICP.AngleOfV_Obj = 0;
+            v_Shape_ICP.PositionOfV_Obj[0] = 100;
+            v_Shape_ICP.PositionOfV_Obj[1] = 350;
+
+            //Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
+            Matrix<double> M_points = v_Shape_ICP.CreateRefMatrix();
+            int Np = M_points.ColumnCount;
+
             Matrix<double> P_points = addMotion(M_points, offset_x, offset_y, alfa);
 
             Bitmap flag = new Bitmap(1000, 1000);
