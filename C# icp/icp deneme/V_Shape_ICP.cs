@@ -43,6 +43,7 @@ namespace icp_deneme
 
         /// will be used to build a matrix
         MatrixBuilder<double> Double_M_Builder = Matrix<double>.Build;
+
         #endregion
 
 
