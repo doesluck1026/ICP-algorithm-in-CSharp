@@ -373,17 +373,15 @@ namespace icp_deneme
             Matrix<double> Yx = m.Dense(1, Np);
             Matrix<double> Yy = m.Dense(1, Np);
             Matrix<double> Yz = m.Dense(1, Np, 0);
-            Matrix<double> dummy_Row = m.Dense(1, Np, 0);
             Matrix<double> Third_raw = m.Dense(1, Np, 0); ///dummy row to be used in calculations
             Matrix<double> Px2 = m.Dense(1, Np);
             Matrix<double> Py2 = m.Dense(1, Np);
             Matrix<double> Pz2 = m.Dense(1, Np);
             Matrix<double> P_points2;
             double s = 1;
-            double delta_error_thresh = 0.00001;
+            double delta_error_thresh = 0.00000001;
             double previous_error = 0;
 
-            Matrix<double> Third_raw1 = m.Dense(1, 1, 0); ///dummy row to be used in calculations
 
             Matrix<double> R;
             Matrix<double> t;
@@ -392,9 +390,11 @@ namespace icp_deneme
             Vector<double> d;
 
             Matrix<double> TransformationMat = m.DenseIdentity(3, 3);
-            
+            Matrix<double> OffsetMatrix=m.Dense(3,1);
+            bool didInit = false;
+            int itr ;
             #endregion
-            for (int itr = 1; itr <= max_iterations; itr++)
+            for (itr = 1; itr <= max_iterations; itr++)
             {
                 Y = KD_tree(M_points, P_points);
                 ///Calculate Centroid for both point clouds
@@ -476,7 +476,6 @@ namespace icp_deneme
                 ///Translation hesabi
                 t = Mu_y - s * R * Mu_p;
 
-                TransformationMat= CreateTransformationMat(R, t).Multiply(TransformationMat);
        
                 ///SCALE Factor hesabi
                 //
@@ -485,6 +484,29 @@ namespace icp_deneme
                 ///Hesaplanan değerler P_points matrisine uygulanıyor
                 if (!_3D)
                 {
+                    //var t_Mat = TransformationMat.Clone();
+                    //var t_Mat_rotated=R.Multiply(t_Mat);
+                    //t_Mat_rotated[0, 2] += t[0, 0];
+                    //t_Mat_rotated[1, 2] += t[1, 0];
+                    //TransformationMat = t_Mat_rotated.Clone();
+                    //TransformationMat[0, 0] = 0;
+                    //TransformationMat[0, 1] = 0;
+                    //TransformationMat[1, 0] = 0;
+                    //TransformationMat[1, 1] = 0;
+
+                   if(!didInit)
+                    {
+                        didInit = true;
+                        TransformationMat[0, 2] = Mu_p[0, 0];
+                        TransformationMat[1, 2] = Mu_p[1, 0];
+                        OffsetMatrix = Mu_p.Clone();
+                    }
+
+                    // TransformationMat.SetRow(2, new double[] { 0, 0, 1 });
+                    TransformationMat = CreateTransformationMat(R, t).Multiply(TransformationMat);
+                    //TransformationMat[0, 2] += Mu_p[0, 0];
+                    //TransformationMat[1, 2] += Mu_p[1, 0];
+
                     P_points2 = R.Multiply(P_points.Stack(Third_raw));
                     Px2.SetRow(0, P_points2.Row(0));
                     Py2.SetRow(0, P_points2.Row(1));
@@ -529,12 +551,21 @@ namespace icp_deneme
                 {
                     Debug.WriteLine("iteration= " + itr);
                     Debug.WriteLine("error= " + err);
+                    Debug.WriteLine("Ending ICP since min error satisfied");
                     break;
                 }
                 previous_error = err;
                 err = 0;
             }
-            return TransformationMat;
+            if(itr>max_iterations)
+                Debug.WriteLine("Ending ICP since for loop satisfied");
+
+            double angle = Math.Atan2(TransformationMat[1, 0], TransformationMat[0, 0]) * 180 / Math.PI;
+            Debug.WriteLine("angle: "+angle);
+            var transformStc = m.Dense(3, 4);
+            transformStc.SetSubMatrix(0, 0, TransformationMat);
+            transformStc.SetColumn(3, OffsetMatrix.Column(0));
+            return transformStc;
         }
         /// <summary>
         /// Calculates Nearest Neighbour for each points and returns distance and coordinate
@@ -633,6 +664,77 @@ namespace icp_deneme
             transformationMatrix.SetColumn(2, t.Column(0));
             transformationMatrix.SetRow(2, new double[] { 0, 0, 1 });
             return transformationMatrix;
+        }
+
+        /// <summary>
+        /// Rotates given data cloud around origin and translate according to translation values
+        /// </summary>
+        /// <param name="points">input data cloud</param>
+        /// <param name="angle">angle of rotation (degree)</param>
+        /// <param name="translation">desired translation : translation[0]=x  translation[1]=y</param>
+        /// <returns>returns transformed data cloud</returns>
+        public static Matrix<double> Transform(Matrix<double> points, double angle,double[] translation)
+        {
+            var m = Matrix<double>.Build;
+            double angleIn_rad = angle * Math.PI / 180.0;
+
+            /// Lets create our rotation matrix
+            Matrix<double> R = m.Dense(2, 2);
+            R[0, 0] = Math.Cos(angleIn_rad);
+            R[0, 1] = Math.Sin(angleIn_rad);
+            R[1, 0] = -Math.Sin(angleIn_rad);
+            R[1, 1] = Math.Cos(angleIn_rad);
+
+            /// Rotate the object
+            var referenceObject_rotated = R.Multiply(points);
+
+            /// Lets Create our translation Matrix;
+            Matrix<double> t = m.Dense(2, 1);
+            t[0, 0] = translation[0];
+            t[1, 0] = translation[1];
+
+            /// Translate the object
+            var transformedData = AddVectorValsToMatrix(referenceObject_rotated, t);
+            return transformedData;
+        }
+
+        /// <summary>
+        /// Rotates given data cloud around origin and translate according to translation values
+        /// </summary>
+        /// <param name="points">input data cloud</param>
+        /// <param name="angle">angle of rotation (degree)</param>
+        /// <param name="translation">desired translation : translation[0]=x  translation[1]=y</param>
+        /// <param name="referencePoint">point that data cloud will be rotated around : referencePoint[0]=x  referencePoint[1]=y</param>
+        /// <returns>returns transformed data cloud</returns>
+        public static Matrix<double> Transform(Matrix<double> points, double angle, double[] translation, double[] referencePoint)
+        {
+            var m = Matrix<double>.Build;
+            double angleIn_rad = angle * Math.PI / 180.0;
+
+            /// Lets create our rotation matrix
+            Matrix<double> R = m.Dense(2, 2);
+            R[0, 0] = Math.Cos(angleIn_rad);
+            R[0, 1] = Math.Sin(angleIn_rad);
+            R[1, 0] = -Math.Sin(angleIn_rad);
+            R[1, 1] = Math.Cos(angleIn_rad);
+
+            Matrix<double> refPointMat = m.Dense(2, 1);
+            refPointMat[0, 0] = referencePoint[0];
+            refPointMat[1, 0] = referencePoint[1];
+
+            var pointsAtOrig= AddVectorValsToMatrix(points, refPointMat.Multiply(-1));
+            /// Rotate the object
+            var pointsAtOrig_rotated = R.Multiply(pointsAtOrig);
+            var referenceObject_rotated = AddVectorValsToMatrix(pointsAtOrig_rotated, refPointMat);
+
+            /// Lets Create our translation Matrix;
+            Matrix<double> t = m.Dense(2, 1);
+            t[0, 0] = translation[0];
+            t[1, 0] = translation[1];
+
+            /// Translate the object
+            var transformedData = AddVectorValsToMatrix(referenceObject_rotated, t);
+            return transformedData;
         }
     }
 }

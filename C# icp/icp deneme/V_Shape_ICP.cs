@@ -92,27 +92,29 @@ namespace icp_deneme
 
             /// Now We can rotate and translate the object according to parameters
 
-            double AngleOfV_Obj_rad = AngleOfV_Obj * Math.PI / 180.0;
+            ReferenceObject=ICP.Transform(referenceObject, AngleOfV_Obj, PositionOfV_Obj);
 
-            /// Lets create our rotation matrix
-            Matrix<double> R = Double_M_Builder.Dense(2, 2);
-            R[0, 0] = Math.Cos(AngleOfV_Obj_rad);
-            R[0, 1] = -Math.Sin(AngleOfV_Obj_rad);
-            R[1, 0] = Math.Sin(AngleOfV_Obj_rad);
-            R[1, 1] = Math.Cos(AngleOfV_Obj_rad);
+            //double AngleOfV_Obj_rad = AngleOfV_Obj * Math.PI / 180.0;
 
-            /// Rotate the object
-            var referenceObject_rotated = R.Multiply(referenceObject);
+            ///// Lets create our rotation matrix
+            //Matrix<double> R = Double_M_Builder.Dense(2, 2);
+            //R[0, 0] = Math.Cos(AngleOfV_Obj_rad);
+            //R[0, 1] = -Math.Sin(AngleOfV_Obj_rad);
+            //R[1, 0] = Math.Sin(AngleOfV_Obj_rad);
+            //R[1, 1] = Math.Cos(AngleOfV_Obj_rad);
 
-            /// Lets Create our translation Matrix;
-            Matrix<double> t = Double_M_Builder.Dense(2, 1);
-            t[0, 0] = PositionOfV_Obj[0];
-            t[1, 0] = PositionOfV_Obj[1];
+            ///// Rotate the object
+            //var referenceObject_rotated = R.Multiply(referenceObject);
 
-            ReferenceObject = referenceObject_rotated.Clone();
-            /// Translate the object
-            ReferenceObject.SetRow(0, referenceObject_rotated.Row(0).Add(t[0, 0]));
-            ReferenceObject.SetRow(1, referenceObject_rotated.Row(1).Add(t[1, 0]));
+            ///// Lets Create our translation Matrix;
+            //Matrix<double> t = Double_M_Builder.Dense(2, 1);
+            //t[0, 0] = PositionOfV_Obj[0];
+            //t[1, 0] = PositionOfV_Obj[1];
+
+            //ReferenceObject = referenceObject_rotated.Clone();
+            ///// Translate the object
+            //ReferenceObject.SetRow(0, referenceObject_rotated.Row(0).Add(t[0, 0]));
+            //ReferenceObject.SetRow(1, referenceObject_rotated.Row(1).Add(t[1, 0]));
 
             return ReferenceObject.Clone();
         }
@@ -167,7 +169,7 @@ namespace icp_deneme
         public Matrix<double> FindVShapePoints(Matrix<double> sampleData)
         {
             int max_itr = 500;
-            double threshold = 0.000001;
+            double threshold = 0.0000000001;
 
             //if (ReferenceObject == null)
                 CreateRefMatrix();
@@ -176,10 +178,11 @@ namespace icp_deneme
 
             var R = transformationMatrix.SubMatrix(0, 2, 0, 2);
             var t = transformationMatrix.SubMatrix(0, 2, 2, 1);
+            var offset = transformationMatrix.SubMatrix(0, 2, 3, 1);
 
             /// corner points coordinates will be stored in this variable. each row is a point in order of left corner, middle corner and right corner
             List<double[]> cornerPoints = new List<double[]>();
-            var r_inv = R.Inverse();
+            var r_inv = R.Transpose();
             var leftCorner = R.Multiply(ReferenceObject.Column(0)).Add(t.Column(0)).ToArray();
             cornerPoints.Add(leftCorner);
 
@@ -190,7 +193,7 @@ namespace icp_deneme
             cornerPoints.Add(rightCorner);
 
             var corners= ICP.AddVectorValsToMatrix(r_inv.Multiply(ReferenceObject),t.Multiply(-1));
-
+            corners = ICP.AddVectorValsToMatrix(corners, offset);
             return corners;
 
         }

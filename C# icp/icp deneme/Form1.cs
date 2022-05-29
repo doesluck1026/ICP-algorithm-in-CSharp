@@ -23,13 +23,6 @@ namespace icp_deneme
         {
             ///definitions
             var m = Matrix<double>.Build;
-            int max_itr = 500;
-            double threshold = 0.000001;
-
-            double grid = 0.1;
-            double err = 0;
-
-            int Np = 500;
             Matrix<double> R = m.Dense(3, 3);
             Matrix<double> t = m.Dense(3, 1);
             double offset_x = 0, offset_y = 120; ///translation respect to origin
@@ -40,9 +33,9 @@ namespace icp_deneme
 
             V_Shape_ICP v_Shape_ICP = new V_Shape_ICP();
 
-            int init_offsetX = 400;
-            int init_offsetY = 200;
-            v_Shape_ICP.AngleOfV_Obj = 90;
+            double init_offsetX = Convert.ToDouble(Txt_InitPosX.Text);
+            double init_offsetY = Convert.ToDouble(Txt_InitPosY.Text);
+            v_Shape_ICP.AngleOfV_Obj = Convert.ToDouble(Txt_InitAngle.Text);
             v_Shape_ICP.PositionOfV_Obj[0] = init_offsetX;
             v_Shape_ICP.PositionOfV_Obj[1] = init_offsetY;
 
@@ -52,7 +45,7 @@ namespace icp_deneme
             ///Create C shaped Data cloud
            // Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
             ///transform this data cloud for specified parameters as Model cloud and copy them to another cloud as sample
-            Matrix<double> P_points = addMotion(M_points, offset_x, offset_y, alfa);
+            Matrix<double> P_points = ICP.Transform(M_points, alfa,new double[] { offset_x, offset_y }, new double[] { init_offsetX, init_offsetY });
             ///Add random noise to Sample Data cloud
             ///Create and draw data images
             Bitmap flag = new Bitmap(1000, 1000);
