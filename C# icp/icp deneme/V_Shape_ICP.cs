@@ -19,7 +19,7 @@ namespace icp_deneme
         /// <summary>
         /// Angle beetween arms (degree)
         /// </summary>
-        public double V_Angle = 120;
+        public double V_Angle = 150;
 
         /// <summary>
         /// Resolution of grid (meters)
@@ -191,9 +191,9 @@ namespace icp_deneme
 
             var rightCorner = R.Multiply(ReferenceObject.Column(ReferenceObject.ColumnCount - 1)).Add(t.Column(0)).ToArray();
             cornerPoints.Add(rightCorner);
-
-            var corners= ICP.AddVectorValsToMatrix(r_inv.Multiply(ReferenceObject),t.Multiply(-1));
-            corners = ICP.AddVectorValsToMatrix(corners, offset);
+            var cornersOrig = ICP.AddVectorValsToMatrix(ReferenceObject, t.Multiply(-1));
+            var corners= ICP.AddVectorValsToMatrix(r_inv.Multiply(cornersOrig), offset.Multiply(1));
+            
             return corners;
 
         }

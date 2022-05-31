@@ -390,9 +390,9 @@ namespace icp_deneme
             Vector<double> d;
 
             Matrix<double> TransformationMat = m.DenseIdentity(3, 3);
-            Matrix<double> OffsetMatrix=m.Dense(3,1);
+            Matrix<double> OffsetMatrix = m.Dense(3, 1);
             bool didInit = false;
-            int itr ;
+            int itr;
             #endregion
             for (itr = 1; itr <= max_iterations; itr++)
             {
@@ -476,7 +476,7 @@ namespace icp_deneme
                 ///Translation hesabi
                 t = Mu_y - s * R * Mu_p;
 
-       
+
                 ///SCALE Factor hesabi
                 //
                 ///          
@@ -484,29 +484,14 @@ namespace icp_deneme
                 ///Hesaplanan değerler P_points matrisine uygulanıyor
                 if (!_3D)
                 {
-                    //var t_Mat = TransformationMat.Clone();
-                    //var t_Mat_rotated=R.Multiply(t_Mat);
-                    //t_Mat_rotated[0, 2] += t[0, 0];
-                    //t_Mat_rotated[1, 2] += t[1, 0];
-                    //TransformationMat = t_Mat_rotated.Clone();
-                    //TransformationMat[0, 0] = 0;
-                    //TransformationMat[0, 1] = 0;
-                    //TransformationMat[1, 0] = 0;
-                    //TransformationMat[1, 1] = 0;
-
-                   if(!didInit)
+                    if (!didInit)
                     {
                         didInit = true;
                         TransformationMat[0, 2] = Mu_p[0, 0];
                         TransformationMat[1, 2] = Mu_p[1, 0];
                         OffsetMatrix = Mu_p.Clone();
                     }
-
-                    // TransformationMat.SetRow(2, new double[] { 0, 0, 1 });
                     TransformationMat = CreateTransformationMat(R, t).Multiply(TransformationMat);
-                    //TransformationMat[0, 2] += Mu_p[0, 0];
-                    //TransformationMat[1, 2] += Mu_p[1, 0];
-
                     P_points2 = R.Multiply(P_points.Stack(Third_raw));
                     Px2.SetRow(0, P_points2.Row(0));
                     Py2.SetRow(0, P_points2.Row(1));
@@ -557,11 +542,11 @@ namespace icp_deneme
                 previous_error = err;
                 err = 0;
             }
-            if(itr>max_iterations)
+            if (itr > max_iterations)
                 Debug.WriteLine("Ending ICP since for loop satisfied");
 
             double angle = Math.Atan2(TransformationMat[1, 0], TransformationMat[0, 0]) * 180 / Math.PI;
-            Debug.WriteLine("angle: "+angle);
+            Debug.WriteLine("angle: " + angle);
             var transformStc = m.Dense(3, 4);
             transformStc.SetSubMatrix(0, 0, TransformationMat);
             transformStc.SetColumn(3, OffsetMatrix.Column(0));
