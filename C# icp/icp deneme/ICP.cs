@@ -552,6 +552,7 @@ namespace icp_deneme
             transformStc.SetColumn(3, OffsetMatrix.Column(0));
             return transformStc;
         }
+
         /// <summary>
         /// Calculates Nearest Neighbour for each points and returns distance and coordinate
         /// </summary>
@@ -589,6 +590,7 @@ namespace icp_deneme
             }
             return Y;///return result matrix
         }
+
         /// <summary>
         /// Finds the center point of given data cloud and returns a matrix of coordinates.
         /// </summary>

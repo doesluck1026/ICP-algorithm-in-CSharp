@@ -125,41 +125,31 @@ namespace icp_deneme
             double threshold = 0.000001;
 
             var sampleData = WritePointsToMatrix(posX, posY);
-            if (ReferenceObject == null)
-                CreateRefMatrix();
+            //if (ReferenceObject == null)
+            CreateRefMatrix();
 
-            /// ref point will be used to calculate translation of sample object since the center of an object wont be affected by rotations.
-            var refPoint = ICP.FindCentroid(sampleData).RemoveRow(2);
-            var alignedPoints = ICP.ICP_run(ReferenceObject, sampleData, threshold, max_itr, false, ref refPoint);
+            var transformationMatrix = ICP.ICP_run(ReferenceObject, sampleData, threshold, max_itr, false);
 
-            /// First two points of alligned point will be assigned to a matrix to calculate overall rotation matrix.
-            var sampleMat_Aligned = Double_M_Builder.Dense(2, 2);
-            sampleMat_Aligned.SetColumn(0, alignedPoints.Column(0));
-            sampleMat_Aligned.SetColumn(1, alignedPoints.Column(1));
-
-            /// First two points of sample points will be assigned to a matrix to calculate overall rotation matrix.
-            var sampleMat_Orig = Double_M_Builder.Dense(2, 2);
-            sampleMat_Orig.SetColumn(0, sampleData.Column(0));
-            sampleMat_Orig.SetColumn(1, sampleData.Column(1));
-
-            /// Substract translation values from the sampleMat
-            var sampleMat_orig = ICP.AddVectorValsToMatrix(sampleMat_Aligned, refPoint.Multiply(-1));
-
-            /// To calculate Rotation matrix, following Equation will be used:
-            /// B=R*A   =>  B*A'=R     -------- B=sampleMat_Aligned  ; A= sampleMat_Orig
-            var sampleMatOrigInv = sampleMat_Orig.Inverse();
-            var R = sampleMat_Aligned.Multiply(sampleMatOrigInv);
+            var R = transformationMatrix.SubMatrix(0, 2, 0, 2);
+            var t = transformationMatrix.SubMatrix(0, 2, 2, 1);
+            var offset = transformationMatrix.SubMatrix(0, 2, 3, 1);
 
             /// corner points coordinates will be stored in this variable. each row is a point in order of left corner, middle corner and right corner
             List<double[]> cornerPoints = new List<double[]>();
 
-            var leftCorner = R.Multiply(ReferenceObject.Column(0)).Add(refPoint.Column(0)).ToArray();
+            /// Calculate inverse of rotation matrix which equals to transpose of it.
+            var r_inv = R.Transpose();
+
+            var transformedP_orig = ICP.AddVectorValsToMatrix(ReferenceObject, t.Multiply(-1));
+            var transformedP = ICP.AddVectorValsToMatrix(r_inv.Multiply(transformedP_orig), offset.Multiply(1));
+
+            var leftCorner = transformedP.Column(0).ToArray();
             cornerPoints.Add(leftCorner);
 
-            var middleCorner = R.Multiply(ReferenceObject.Column(ReferenceObject.ColumnCount / 2)).Add(refPoint.Column(0)).ToArray();
+            var middleCorner = transformedP.Column(transformedP.ColumnCount / 2).ToArray();
             cornerPoints.Add(middleCorner);
 
-            var rightCorner = R.Multiply(ReferenceObject.Column(ReferenceObject.ColumnCount - 1)).Add(refPoint.Column(0)).ToArray();
+            var rightCorner = transformedP.Column(transformedP.ColumnCount - 1).ToArray();
             cornerPoints.Add(rightCorner);
 
             return cornerPoints;
@@ -182,21 +172,25 @@ namespace icp_deneme
 
             /// corner points coordinates will be stored in this variable. each row is a point in order of left corner, middle corner and right corner
             List<double[]> cornerPoints = new List<double[]>();
+
+            /// Calculate inverse of rotation matrix which equals to transpose of it.
             var r_inv = R.Transpose();
-            var leftCorner = R.Multiply(ReferenceObject.Column(0)).Add(t.Column(0)).ToArray();
+
+            var transformedP_orig = ICP.AddVectorValsToMatrix(ReferenceObject, t.Multiply(-1));
+            var transformedP = ICP.AddVectorValsToMatrix(r_inv.Multiply(transformedP_orig), offset.Multiply(1));
+
+            var leftCorner = transformedP.Column(0).ToArray();
             cornerPoints.Add(leftCorner);
 
-            var middleCorner = R.Multiply(ReferenceObject.Column(ReferenceObject.ColumnCount / 2)).Add(t.Column(0)).ToArray();
+            var middleCorner = transformedP.Column(transformedP.ColumnCount/2).ToArray();
             cornerPoints.Add(middleCorner);
 
-            var rightCorner = R.Multiply(ReferenceObject.Column(ReferenceObject.ColumnCount - 1)).Add(t.Column(0)).ToArray();
+            var rightCorner = transformedP.Column(transformedP.ColumnCount-1).ToArray();
             cornerPoints.Add(rightCorner);
-            var cornersOrig = ICP.AddVectorValsToMatrix(ReferenceObject, t.Multiply(-1));
-            var corners= ICP.AddVectorValsToMatrix(r_inv.Multiply(cornersOrig), offset.Multiply(1));
             
-            return corners;
-
+            return transformedP;
         }
+
         public static Matrix<double> WritePointsToMatrix(double[] posX, double[] posY)
         {
             int pointCount = posX.Length;
