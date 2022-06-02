@@ -599,6 +599,20 @@ namespace icp_deneme
         public static Matrix<double> FindCentroid(Matrix<double> points)
         {
             var m = Matrix<double>.Build;
+            var centroid = m.Dense(3, 1, 0);
+            var centroid2D= points.RowSums().Multiply(1.0/points.ColumnCount).ToColumnMatrix();
+            centroid.SetSubMatrix(0, 0, centroid2D);
+            return centroid;
+        }
+        /// <summary>
+        /// Finds the center point of given data cloud and returns a matrix of coordinates.
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        public static Matrix<double> FindCentroid2(Matrix<double> points)
+        {
+            Stopwatch stp = Stopwatch.StartNew();
+            var m = Matrix<double>.Build;
             int column_count = points.ColumnCount;
             Matrix<double> centroid = m.Dense(3, 1, 0);
             double TotalX = 0;
@@ -621,6 +635,7 @@ namespace icp_deneme
             centroid[0, 0] = AvrX;
             centroid[1, 0] = AvrY;
             centroid[2, 0] = AvrZ;
+            System.Diagnostics.Debug.WriteLine("time: " + stp.Elapsed.TotalMilliseconds.ToString("0.000"));
             return centroid;
         }
         public static Matrix<double> AddVectorValsToMatrix(Matrix<double> matrix, Matrix<double> vector)
