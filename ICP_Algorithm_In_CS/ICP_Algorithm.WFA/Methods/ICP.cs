@@ -10,12 +10,13 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using ICP_Algorithm.WFA.Languages;
 using MathNet.Numerics.LinearAlgebra;
 using Supercluster.KDTree;
 
-namespace icp_deneme
+namespace ICP_Algorithm.WFA.Methods
 {
-    class ICP
+    internal class ICP
     {
         /// <summary>
         ///  Calculates Rotation, translation and error between two data sets and returns a Tuple of R,t,err.
@@ -25,7 +26,7 @@ namespace icp_deneme
         /// <param name="P_points"></param>
         /// <param name="_3D"></param>
         /// <returns></returns>
-        public static Tuple<Matrix<double>, Matrix<double>, double> ICP_run(Matrix<double> M_points, Matrix<double> P_points, bool _3D)
+        internal static Tuple<Matrix<double>, Matrix<double>, double> ICP_run(Matrix<double> M_points, Matrix<double> P_points, bool _3D)
         {
             int Np;
             var m = Matrix<double>.Build;
@@ -35,7 +36,7 @@ namespace icp_deneme
             double s = 1;
 
             Matrix<double> R;
-            Matrix<double> t ;
+            Matrix<double> t;
             Vector<double> d;
             double err = 0;
             Matrix<double> dummy_Row = m.Dense(1, Np, 0);
@@ -59,7 +60,7 @@ namespace icp_deneme
                 dummy_p3.SetRow(0, P_points.Row(2));
             }
             /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
-            Matrix<double> P_prime = (dummy_p1 - Mu_p[0, 0]).Stack(dummy_p2 - Mu_p[1, 0]).Stack(dummy_p3 - Mu_p[2, 0]) ;
+            Matrix<double> P_prime = (dummy_p1 - Mu_p[0, 0]).Stack(dummy_p2 - Mu_p[1, 0]).Stack(dummy_p3 - Mu_p[2, 0]);
             ///Y matrisinin X ve Y koordinatlarini iceren satirlari farkli matrislere aliniyor
             dummy_y1.SetRow(0, Y.Row(0));
             dummy_y2.SetRow(0, Y.Row(1));
@@ -67,8 +68,8 @@ namespace icp_deneme
             {
                 dummy_y3.SetRow(0, Y.Row(2));
             }
-                /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
-                Matrix<double> Y_prime = (dummy_y1 - Mu_y[0, 0]).Stack((dummy_y2 - Mu_y[1, 0]).Stack(dummy_y3 - Mu_y[2, 0]));
+            /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
+            Matrix<double> Y_prime = (dummy_y1 - Mu_y[0, 0]).Stack((dummy_y2 - Mu_y[1, 0]).Stack(dummy_y3 - Mu_y[2, 0]));
             /// -X -Y -Z koordinat matrisleri aliniyor.
             Matrix<double> Px = m.Dense(1, Np);
             Matrix<double> Py = m.Dense(1, Np);
@@ -78,10 +79,10 @@ namespace icp_deneme
             Matrix<double> Yz = m.Dense(1, Np, 0);
             Px.SetRow(0, P_prime.Row(0));
             Py.SetRow(0, P_prime.Row(1));
-            
+
             Yx.SetRow(0, Y_prime.Row(0));
             Yy.SetRow(0, Y_prime.Row(1));
-            
+
             if (_3D)
             {
                 Pz.SetRow(0, P_prime.Row(2));
@@ -103,7 +104,7 @@ namespace icp_deneme
                                                 {-Szy[0, 0] + Syz[0, 0],        Sxx[0, 0] - Syy[0, 0] - Szz[0, 0],  Sxy[0, 0] + Syx[0, 0],        Sxz[0, 0] + Szx[0, 0]},
                                                 {Szx[0, 0] - Sxz[0, 0],         Syx[0, 0] + Sxy[0, 0],       -Sxx[0, 0] + Syy[0, 0] - Szz[0, 0],  Syz[0, 0] + Szy[0, 0]},
                                                 {-Syx[0, 0] + Sxy[0, 0],        Szx[0, 0] + Sxz[0, 0],        Szy[0, 0] + Syz[0, 0],       -Sxx[0, 0] + Szz[0, 0] - Syy[0, 0]} });
-            
+
             var evd = Nmatrix.Evd();
             Matrix<double> eigenvectors = evd.EigenVectors;
             var q = eigenvectors.Column(3);
@@ -122,7 +123,7 @@ namespace icp_deneme
             ///Rotasyon matrisi hesabi
             R = (Qbar.Transpose()).Multiply(Q);
             R = (R.RemoveColumn(0)).RemoveRow(0);
-           
+
             ///Translation hesabi
             t = Mu_y - s * R * Mu_p;
 
@@ -145,10 +146,10 @@ namespace icp_deneme
                     err += d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
                 }
             }
-            Tuple<Matrix<double>, Matrix<double>, double> ret = new Tuple<Matrix<double>, Matrix<double>, double>(R,t, err);
+            Tuple<Matrix<double>, Matrix<double>, double> ret = new Tuple<Matrix<double>, Matrix<double>, double>(R, t, err);
             return ret;
         }
-        
+
         /// <summary>
         /// This Function Calculates Final P_points under the conditions of either threshold or maximum iterations that given as input.
         /// Returns matched P_points.
@@ -159,7 +160,7 @@ namespace icp_deneme
         /// <param name="max_iterations"></param>
         /// <param name="_3D"></param>
         /// <returns></returns>
-        public static Matrix<double> ICP_run(Matrix<double> M_points, Matrix<double> P_points,double threshold,int max_iterations,bool _3D,ref Matrix<double> ref_vector)
+        internal static Matrix<double> ICP_run(Matrix<double> M_points, Matrix<double> P_points, double threshold, int max_iterations, bool _3D, ref Matrix<double> ref_vector)
         {
             #region "Definitions"
             var m = Matrix<double>.Build;
@@ -188,8 +189,8 @@ namespace icp_deneme
 
             Matrix<double> Third_raw1 = m.Dense(1, 1, 0); ///dummy row to be used in calculations
 
-            Matrix<double> R ;
-            Matrix<double> t ;
+            Matrix<double> R;
+            Matrix<double> t;
             double err = 0;
             Matrix<double> Y;
             Vector<double> d;
@@ -201,7 +202,7 @@ namespace icp_deneme
                 ///P ve Y matrislerinin agirlik merkezi hesaplaniyor
                 Matrix<double> Mu_p = FindCentroid(P_points);
                 Matrix<double> Mu_y = FindCentroid(Y);
-           
+
                 ///P matrisinin X ve Y koordinatlarini iceren satirlari farkli matrislere aliniyor
                 dummy_p1.SetRow(0, P_points.Row(0));
                 dummy_p2.SetRow(0, P_points.Row(1));
@@ -209,9 +210,9 @@ namespace icp_deneme
                 {
                     dummy_p3.SetRow(0, P_points.Row(2));
                 }
-                    ///P_points is moved to origin by subtructing centroid from every element.
-                    /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
-                    Matrix<double> P_prime = (dummy_p1 - Mu_p[0, 0]).Stack((dummy_p2 - Mu_p[1, 0]).Stack(dummy_p3 - Mu_p[2, 0]));
+                ///P_points is moved to origin by subtructing centroid from every element.
+                /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
+                Matrix<double> P_prime = (dummy_p1 - Mu_p[0, 0]).Stack((dummy_p2 - Mu_p[1, 0]).Stack(dummy_p3 - Mu_p[2, 0]));
                 ///Calculate Centroid for both point clouds
                 ///Y matrisinin X ve Y koordinatlarini iceren satirlari farkli matrislere aliniyor
                 dummy_y1.SetRow(0, Y.Row(0));
@@ -220,10 +221,10 @@ namespace icp_deneme
                 {
                     dummy_y3.SetRow(0, Y.Row(2));
                 }
-                    ///M_points is moved to origin by subtructing centroid from every element.
-                    /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
-                    Matrix<double> Y_prime = (dummy_y1 - Mu_y[0, 0]).Stack((dummy_y2 - Mu_y[1, 0]).Stack(dummy_y3 - Mu_y[2, 0]));
-                
+                ///M_points is moved to origin by subtructing centroid from every element.
+                /// P deki her bir noktadan p nin agirlik merkezinin koordinatlari cikartiliyor(ZERO MEAN) yeni bir matris icerisine kaydediliyor.
+                Matrix<double> Y_prime = (dummy_y1 - Mu_y[0, 0]).Stack((dummy_y2 - Mu_y[1, 0]).Stack(dummy_y3 - Mu_y[2, 0]));
+
                 /// -X -Y -Z koordinat matrisleri aliniyor.                
                 Px.SetRow(0, P_prime.Row(0));
                 Py.SetRow(0, P_prime.Row(1));
@@ -234,7 +235,7 @@ namespace icp_deneme
                 }
                 Yx.SetRow(0, Y_prime.Row(0));
                 Yy.SetRow(0, Y_prime.Row(1));
-                
+
 
                 var Sxx = Px * Yx.Transpose();
                 var Sxy = Px * Yy.Transpose();
@@ -251,7 +252,7 @@ namespace icp_deneme
                                                 {-Szy[0, 0] + Syz[0, 0],        Sxx[0, 0] - Syy[0, 0] - Szz[0, 0],  Sxy[0, 0] + Syx[0, 0],        Sxz[0, 0] + Szx[0, 0]},
                                                 {Szx[0, 0] - Sxz[0, 0],         Syx[0, 0] + Sxy[0, 0],       -Sxx[0, 0] + Syy[0, 0] - Szz[0, 0],  Syz[0, 0] + Szy[0, 0]},
                                                 {-Syx[0, 0] + Sxy[0, 0],        Szx[0, 0] + Sxz[0, 0],        Szy[0, 0] + Syz[0, 0],       -Sxx[0, 0] + Szz[0, 0] - Syy[0, 0]} });
-                
+
                 var evd = Nmatrix.Evd();
                 Matrix<double> eigenvectors = evd.EigenVectors;
                 var q = eigenvectors.Column(3);
@@ -321,7 +322,7 @@ namespace icp_deneme
                     Pz2.SetRow(0, P_points2.Row(2));
                     Px2 = Px2 + t[0, 0];
                     Py2 = Py2 + t[1, 0];
-                    Pz2=Pz2 + t[2, 0];
+                    Pz2 = Pz2 + t[2, 0];
                     P_points.SetRow(0, Px2.Row(0));
                     P_points.SetRow(1, Py2.Row(0));
                     P_points.SetRow(2, Pz2.Row(0));
@@ -336,12 +337,12 @@ namespace icp_deneme
                 ///koşullar kontrol ediliyor.
                 if (err < threshold || Math.Abs(previous_error - err) < delta_error_thresh)
                 {
-                    Debug.WriteLine("iteration= " + itr);
-                    Debug.WriteLine("error= " + err);
-                    break;                    
-                }                
+                    Debug.WriteLine(Localization.iteration + itr);
+                    Debug.WriteLine(Localization.error2 + err);
+                    break;
+                }
                 previous_error = err;
-                err = 0;                
+                err = 0;
             }
             return P_points;
         }
@@ -356,7 +357,7 @@ namespace icp_deneme
         /// <param name="max_iterations"></param>
         /// <param name="_3D"></param>
         /// <returns></returns>
-        public static Matrix<double> ICP_run(Matrix<double> M_points, Matrix<double> P_points, double threshold, int max_iterations, bool _3D)
+        internal static Matrix<double> ICP_run(Matrix<double> M_points, Matrix<double> P_points, double threshold, int max_iterations, bool _3D)
         {
             #region "Definitions"
             var m = Matrix<double>.Build;
@@ -534,19 +535,19 @@ namespace icp_deneme
                 ///koşullar kontrol ediliyor.
                 if (err < threshold || Math.Abs(previous_error - err) < delta_error_thresh)
                 {
-                    Debug.WriteLine("iteration= " + itr);
-                    Debug.WriteLine("error= " + err);
-                    Debug.WriteLine("Ending ICP since min error satisfied");
+                    Debug.WriteLine(Localization.iteration + itr);
+                    Debug.WriteLine(Localization.error2 + err);
+                    Debug.WriteLine(Localization.MinError);
                     break;
                 }
                 previous_error = err;
                 err = 0;
             }
             if (itr > max_iterations)
-                Debug.WriteLine("Ending ICP since for loop satisfied");
+                Debug.WriteLine(Localization.ForLoop);
 
             double angle = Math.Atan2(TransformationMat[1, 0], TransformationMat[0, 0]) * 180 / Math.PI;
-            Debug.WriteLine("angle: " + angle);
+            Debug.WriteLine(Localization.angle2 + angle);
             var transformStc = m.Dense(3, 4);
             transformStc.SetSubMatrix(0, 0, TransformationMat);
             transformStc.SetColumn(3, OffsetMatrix.Column(0));
@@ -559,7 +560,7 @@ namespace icp_deneme
         /// <param name="M_points"></param>
         /// <param name="P_points"></param>
         /// <returns></returns>
-        public static Matrix<double> KD_tree(Matrix<double> M_points, Matrix<double> P_points)
+        internal static Matrix<double> KD_tree(Matrix<double> M_points, Matrix<double> P_points)
         {
             int Np = P_points.ColumnCount;
 
@@ -577,7 +578,7 @@ namespace icp_deneme
             var treeData2 = M_points.ToColumnArrays();
             var treeNodes = treeData2.Select(p => p.ToString()).ToArray();
             var m = Matrix<double>.Build;
-            Matrix<double> Y = m.Dense(3, Np,0);
+            Matrix<double> Y = m.Dense(3, Np, 0);
             Tuple<double[], string>[] test;
             var tree = new KDTree<double, string>(2, treeData2, treeNodes, L2Norm);
             var scan_data = P_points.ToColumnArrays();
@@ -596,11 +597,11 @@ namespace icp_deneme
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public static Matrix<double> FindCentroid(Matrix<double> points)
+        internal static Matrix<double> FindCentroid(Matrix<double> points)
         {
             var m = Matrix<double>.Build;
             var centroid = m.Dense(3, 1, 0);
-            var centroid2D= points.RowSums().Multiply(1.0/points.ColumnCount).ToColumnMatrix();
+            var centroid2D = points.RowSums().Multiply(1.0 / points.ColumnCount).ToColumnMatrix();
             centroid.SetSubMatrix(0, 0, centroid2D);
             return centroid;
         }
@@ -609,7 +610,7 @@ namespace icp_deneme
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public static Matrix<double> FindCentroid2(Matrix<double> points)
+        internal static Matrix<double> FindCentroid2(Matrix<double> points)
         {
             Stopwatch stp = Stopwatch.StartNew();
             var m = Matrix<double>.Build;
@@ -635,10 +636,10 @@ namespace icp_deneme
             centroid[0, 0] = AvrX;
             centroid[1, 0] = AvrY;
             centroid[2, 0] = AvrZ;
-            System.Diagnostics.Debug.WriteLine("time: " + stp.Elapsed.TotalMilliseconds.ToString("0.000"));
+            Debug.WriteLine(Localization.Time2 + stp.Elapsed.TotalMilliseconds.ToString("0.000"));
             return centroid;
         }
-        public static Matrix<double> AddVectorValsToMatrix(Matrix<double> matrix, Matrix<double> vector)
+        internal static Matrix<double> AddVectorValsToMatrix(Matrix<double> matrix, Matrix<double> vector)
         {
             var m = Matrix<double>.Build;
             var retMatrix = matrix.Clone();
@@ -660,7 +661,7 @@ namespace icp_deneme
         /// <param name="R">Rotation matrix (3x3)</param>
         /// <param name="t">translation vector(3x1)</param>
         /// <returns></returns>
-        public static Matrix<double>CreateTransformationMat(Matrix<double> R,Matrix<double> t)
+        internal static Matrix<double> CreateTransformationMat(Matrix<double> R, Matrix<double> t)
         {
             Matrix<double> transformationMatrix = R.Clone();
             transformationMatrix.SetColumn(2, t.Column(0));
@@ -675,7 +676,7 @@ namespace icp_deneme
         /// <param name="angle">angle of rotation (degree)</param>
         /// <param name="translation">desired translation : translation[0]=x  translation[1]=y</param>
         /// <returns>returns transformed data cloud</returns>
-        public static Matrix<double> Transform(Matrix<double> points, double angle,double[] translation)
+        internal static Matrix<double> Transform(Matrix<double> points, double angle, double[] translation)
         {
             var m = Matrix<double>.Build;
             double angleIn_rad = angle * Math.PI / 180.0;
@@ -708,7 +709,8 @@ namespace icp_deneme
         /// <param name="translation">desired translation : translation[0]=x  translation[1]=y</param>
         /// <param name="referencePoint">point that data cloud will be rotated around : referencePoint[0]=x  referencePoint[1]=y</param>
         /// <returns>returns transformed data cloud</returns>
-        public static Matrix<double> Transform(Matrix<double> points, double angle, double[] translation, double[] referencePoint)
+        /// 
+        internal static Matrix<double> Transform(Matrix<double> points, double angle, double[] translation, double[] referencePoint)
         {
             var m = Matrix<double>.Build;
             double angleIn_rad = angle * Math.PI / 180.0;
@@ -724,7 +726,7 @@ namespace icp_deneme
             refPointMat[0, 0] = referencePoint[0];
             refPointMat[1, 0] = referencePoint[1];
 
-            var pointsAtOrig= AddVectorValsToMatrix(points, refPointMat.Multiply(-1));
+            var pointsAtOrig = AddVectorValsToMatrix(points, refPointMat.Multiply(-1));
             /// Rotate the object
             var pointsAtOrig_rotated = R.Multiply(pointsAtOrig);
             var referenceObject_rotated = AddVectorValsToMatrix(pointsAtOrig_rotated, refPointMat);

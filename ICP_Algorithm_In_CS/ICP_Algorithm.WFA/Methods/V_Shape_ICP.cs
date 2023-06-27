@@ -1,40 +1,37 @@
-﻿using System;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MathNet.Numerics.LinearAlgebra;
 
-namespace icp_deneme
+namespace ICP_Algorithm.WFA.Methods
 {
-    class V_Shape_ICP
+    internal class V_Shape_ICP
     {
         #region Parametes
 
         /// <summary>
         /// Lenght of the each arm in V shape object (Meters)
         /// </summary>
-        public double ArmLength = 50;
+        internal double ArmLength = 50;
 
         /// <summary>
         /// Angle beetween arms (degree)
         /// </summary>
-        public double V_Angle = 150;
+        internal double V_Angle = 150;
 
         /// <summary>
         /// Resolution of grid (meters)
         /// </summary>
-        public double GridResolution = 0.2;
+        internal double GridResolution = 0.2;
 
         /// <summary>
         /// Angle of V object respect to origin
         /// </summary>
-        public double AngleOfV_Obj = 0;
+        internal double AngleOfV_Obj = 0;
 
         /// <summary>
         /// Position of V object respect to origin
         /// </summary>
-        public double[] PositionOfV_Obj = new double[] { 0, 0 };
+        internal double[] PositionOfV_Obj = new double[] { 0, 0 };
 
         #endregion
 
@@ -43,18 +40,14 @@ namespace icp_deneme
 
         /// will be used to build a matrix
         MatrixBuilder<double> Double_M_Builder = Matrix<double>.Build;
-        
         #endregion
-
 
         /// <summary>
         /// This function Creates the V-Shape object using parameters above. 
         /// Created object will initially be in the origin with angle of zero.
         /// </summary>
-        public Matrix<double> CreateRefMatrix()
+        internal Matrix<double> CreateRefMatrix()
         {
-
-
             /// equation of a line is defined as y=ax+c
             /// this is the equation of the line which to be used to generate object points if x value is smaller than zero.
             /// this will be defined as a double array where the first element is "a" parameter and second element is "c" parameter of the line equation above
@@ -92,7 +85,7 @@ namespace icp_deneme
 
             /// Now We can rotate and translate the object according to parameters
 
-            ReferenceObject=ICP.Transform(referenceObject, AngleOfV_Obj, PositionOfV_Obj);
+            ReferenceObject = ICP.Transform(referenceObject, AngleOfV_Obj, PositionOfV_Obj);
 
             //double AngleOfV_Obj_rad = AngleOfV_Obj * Math.PI / 180.0;
 
@@ -119,7 +112,7 @@ namespace icp_deneme
             return ReferenceObject.Clone();
         }
 
-        public List<double[]> FindVShapePoints(double[] posX, double[] posY)
+        internal List<double[]> FindVShapePoints(double[] posX, double[] posY)
         {
             int max_itr = 500;
             double threshold = 0.000001;
@@ -153,16 +146,15 @@ namespace icp_deneme
             cornerPoints.Add(rightCorner);
 
             return cornerPoints;
-
         }
 
-        public Matrix<double> FindVShapePoints(Matrix<double> sampleData)
+        internal Matrix<double> FindVShapePoints(Matrix<double> sampleData)
         {
             int max_itr = 500;
             double threshold = 0.0000000001;
 
             //if (ReferenceObject == null)
-                CreateRefMatrix();
+            CreateRefMatrix();
 
             var transformationMatrix = ICP.ICP_run(ReferenceObject, sampleData, threshold, max_itr, false);
 
@@ -182,16 +174,16 @@ namespace icp_deneme
             var leftCorner = transformedP.Column(0).ToArray();
             cornerPoints.Add(leftCorner);
 
-            var middleCorner = transformedP.Column(transformedP.ColumnCount/2).ToArray();
+            var middleCorner = transformedP.Column(transformedP.ColumnCount / 2).ToArray();
             cornerPoints.Add(middleCorner);
 
-            var rightCorner = transformedP.Column(transformedP.ColumnCount-1).ToArray();
+            var rightCorner = transformedP.Column(transformedP.ColumnCount - 1).ToArray();
             cornerPoints.Add(rightCorner);
-            
+
             return transformedP;
         }
 
-        public static Matrix<double> WritePointsToMatrix(double[] posX, double[] posY)
+        internal static Matrix<double> WritePointsToMatrix(double[] posX, double[] posY)
         {
             int pointCount = posX.Length;
             var m = Matrix<double>.Build;

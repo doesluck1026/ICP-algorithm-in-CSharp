@@ -3,23 +3,61 @@
 /// CREATE DATE  :29.11.2019
 /// PURPOSE      : This class is used for calculation of convergens between two point clouds. These point clouds should be same dimensional but can have different number of sample points.
 
+using ICP_Algorithm.WFA.Forms;
+using ICP_Algorithm.WFA.Languages;
+using ICP_Algorithm.WFA.Methods;
+using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using MathNet.Numerics.LinearAlgebra;
 
-namespace icp_deneme
+namespace ICP_Algorithm.WFA
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         double previous_error;
         double delta_error_thresh = 0.0001;
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
+            GetLang();
         }
-        private void button4_Click(object sender, EventArgs e)
+
+        private void GetLang()
+        {
+            this.Text = Localization.MainFormTitle;
+
+            #region TopMenu
+            fileToolStripMenuItem.Text = Localization.File;
+            exitToolStripMenuItem.Text = Localization.Exit;
+
+            toolsToolStripMenuItem.Text = Localization.Tools;
+            optionsToolStripMenuItem.Text = Localization.Options;
+
+            helpToolStripMenuItem.Text = Localization.Help;
+            reportAnIssueToolStripMenuItem.Text = Localization.ReportAnIssue;
+            githubWebPageToolStripMenuItem.Text = Localization.githubWebPage;
+            aTutorialOnRigidRegistrationToolStripMenuItem.Text = Localization.aTutorialOnRigidRegistration;
+            aboutToolStripMenuItem.Text = Localization.About;
+            #endregion
+
+            grpBoxInitialTopLeft.Text = Localization.grpBoxInitialTopLeft;
+            grpBoxTransformationTopLeft.Text = Localization.grpBoxTransformationTopLeft;
+
+            btnNoisySample.Text = Localization.NoisySample;
+            btn_normal_sample.Text = Localization.NormalSample;
+            btnShowFinal.Text = Localization.ShowFinal;
+
+            lbAngle.Text = Localization.Angle;
+            lbAngle2.Text = Localization.Angle;
+            lbX.Text = Localization.X;
+            lbX2.Text = Localization.X;
+            lbY.Text = Localization.Y;
+            lbY2.Text = Localization.Y;
+        }
+
+        private void btnShowFinal_Click(object sender, EventArgs e)
         {
             ///definitions
             var m = Matrix<double>.Build;
@@ -45,7 +83,7 @@ namespace icp_deneme
             ///Create C shaped Data cloud
            // Matrix<double> M_points = CreateCircle(grid, Np, 10, 350);
             ///transform this data cloud for specified parameters as Model cloud and copy them to another cloud as sample
-            Matrix<double> P_points = ICP.Transform(M_points, alfa,new double[] { offset_x, offset_y }, new double[] { init_offsetX, init_offsetY });
+            Matrix<double> P_points = ICP.Transform(M_points, alfa, new double[] { offset_x, offset_y }, new double[] { init_offsetX, init_offsetY });
             ///Add random noise to Sample Data cloud
             ///Create and draw data images
             Bitmap flag = new Bitmap(1000, 1000);
@@ -70,26 +108,27 @@ namespace icp_deneme
             offsetMat[1, 0] = init_offsetY;
             var cornerPoints2 = v_Shape_ICP.FindVShapePoints(P_points);
             //var cornerPoints = ICP.AddVectorValsToMatrix(cornerPoints2, offsetMat);
-            
+
             //leftCorner = (double[])cornerPoints[0].Clone();
             //midPoint = (double[])cornerPoints[1].Clone();
             //rightCorner = (double[])cornerPoints[2].Clone();
 
 
             ///Apply ICP  to Point clouds
-           // P_points = ICP.ICP_run(M_points, P_points, threshold, max_itr,false,ref ref_Vector);
+            // P_points = ICP.ICP_run(M_points, P_points, threshold, max_itr,false,ref ref_Vector);
             watch.Stop();
-            Debug.WriteLine("ICP time = " + watch.ElapsedMilliseconds + " ms");
+            Debug.WriteLine(Localization.ICPtime + watch.ElapsedMilliseconds + " " + Localization.ms);
             ///Draw Results
             g.Clear(Color.Black);
             pictureBox1.Image = flag;
             DrawPoint2(P_points, Brushes.Red, pictureBox1, g);
             DrawPoint2(cornerPoints2, Brushes.White, pictureBox1, g);
-            DrawPoint2(M_points, new SolidBrush(Color.FromArgb(30,Color.Green)), pictureBox1, g);
+            DrawPoint2(M_points, new SolidBrush(Color.FromArgb(30, Color.Green)), pictureBox1, g);
             //DrawPoint2(ref_Vector, Brushes.Blue, pictureBox1, g);
             //DrawPoint2(ref_Vector_ref, Brushes.White, pictureBox1, g);
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnNoisySample_Click(object sender, EventArgs e)
         {
             var m = Matrix<double>.Build;
             int max_itr = 5000;
@@ -129,7 +168,7 @@ namespace icp_deneme
             {
                 watch.Restart();
 
-                ret = ICP.ICP_run(M_points, P_points,false);
+                ret = ICP.ICP_run(M_points, P_points, false);
                 R = ret.Item1;
                 t = ret.Item2;
                 err = ret.Item3;
@@ -153,13 +192,13 @@ namespace icp_deneme
                 DrawPoint2(M_points, Brushes.Green, pictureBox1, g);
                 if (err < threshold || Math.Abs(previous_error - err) < delta_error_thresh)
                 {
-                    Debug.WriteLine("error: " + err);
-                    Debug.WriteLine("iteration= " + itr);
+                    Debug.WriteLine(Localization.error + err);
+                    Debug.WriteLine(Localization.iteration + itr);
                     break;
                 }
                 previous_error = err;
-            }            
-            Debug.WriteLine("Time=" + time + "ms");
+            }
+            Debug.WriteLine(Localization.Time + time + Localization.ms);
         }
         private void btn_normal_sample_Click(object sender, EventArgs e)
         {
@@ -203,7 +242,7 @@ namespace icp_deneme
             for (int itr = 1; itr <= max_itr; itr++)
             {
                 watch.Restart();
-                ret = ICP.ICP_run(M_points, P_points,false);
+                ret = ICP.ICP_run(M_points, P_points, false);
                 R = ret.Item1;
                 t = ret.Item2;
                 err = ret.Item3;
@@ -227,14 +266,15 @@ namespace icp_deneme
                 DrawPoint2(M_points, Brushes.Green, pictureBox1, g);
                 if (err < threshold || Math.Abs(previous_error - err) < delta_error_thresh)
                 {
-                    Debug.WriteLine("error: " + err);
-                    Debug.WriteLine("iteration= " + itr);
+                    Debug.WriteLine(Localization.error + err);
+                    Debug.WriteLine(Localization.iteration + itr);
                     break;
                 }
-                previous_error = err;                
+                previous_error = err;
             }
-            Debug.WriteLine("Time=" + time + "ms");
+            Debug.WriteLine(Localization.Time + time + Localization.ms);
         }
+
         public Matrix<double> addMotion(Matrix<double> cpoints, double dx, double dy, double dtheta)
         {
             var m = Matrix<double>.Build;
@@ -260,12 +300,12 @@ namespace icp_deneme
             {
                 dummycpointsV = cpoints.Column(i) + Tt.Column(0);
                 dummycpointsM = dummycpointsM.Append(dummycpointsV.ToColumnMatrix());
-
             }
             cpoints = dummycpointsM;
 
             return cpoints;
         }
+
         public Matrix<double> CreateCircle(double grid, int len, int offset_x, int offset_y)
         {
             var m = Matrix<double>.Build;
@@ -296,9 +336,9 @@ namespace icp_deneme
             }
             return points;
         }
+
         public void DrawPoint2(Matrix<double> point, Brush b, PictureBox p, Graphics g)
         {
-
             try
             {
                 int nPoint = point.ColumnCount;
@@ -320,7 +360,43 @@ namespace icp_deneme
             {
 
             }
-            
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowOptionsForm();
+        }
+
+        private void ShowOptionsForm()
+        {
+            OptionsFrm optionsFrm = new OptionsFrm();
+            optionsFrm.ShowDialog();
+        }
+
+        private void reportAnIssueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Websites.OpenGithubIssues();
+        }
+
+        private void githubWebPageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Websites.OpenGithubProject();
+        }
+
+        private void aTutorialOnRigidRegistrationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Websites.OpenATutorialOnRigidRegistration();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox aboutBox = new AboutBox();
+            aboutBox.ShowDialog();
         }
     }
 }

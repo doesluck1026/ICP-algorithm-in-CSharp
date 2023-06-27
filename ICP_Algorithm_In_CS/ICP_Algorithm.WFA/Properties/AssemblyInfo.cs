@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("icp deneme")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ICP Algorithm In C#")]
+[assembly: AssemblyDescription("ICP Algorithm In C#")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("icp deneme")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("Yahya Sevikoğlu (doesluck1026)")]
+[assembly: AssemblyProduct("ICP Algorithm In C#")]
+[assembly: AssemblyCopyright("Yahya Sevikoğlu (doesluck1026) ©  2019-2023")]
+[assembly: AssemblyTrademark("Yahya Sevikoğlu (doesluck1026)")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
